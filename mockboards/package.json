@@ -1,0 +1,12 @@
+{
+  "name": "job-board-mockboards",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Three local mock job boards (SSR, SPA, consent wall + JSON-LD) for the scrapers to crawl.",
+  "type": "module",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  }
+}
