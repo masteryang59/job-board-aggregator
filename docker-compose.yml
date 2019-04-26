@@ -1,0 +1,82 @@
+# docker compose up --build
+#   http://localhost:8080        the app (Vue, served by nginx, /api proxied to Django)
+#   http://localhost:8080/admin  Django admin (create a user: see README)
+#   http://localhost:4010        the mock job boards being scraped
+
+name: job-board-aggregator
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: jobs
+      POSTGRES_USER: jobs
+      POSTGRES_PASSWORD: jobs
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobs -d jobs"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://jobs:jobs@db:5432/jobs
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-in-production}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      INGEST_TOKEN: ${INGEST_TOKEN:-dev-ingest-token}
+      DETAIL_MAX_AGE_HOURS: ${DETAIL_MAX_AGE_HOURS:-24}
+      MAX_CLOSE_FRACTION: ${MAX_CLOSE_FRACTION:-0.5}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  mockboards:
+    build: ./mockboards
+    environment:
+      MOCK_SEED: ${MOCK_SEED:-13}
+      MOCK_FAULTS: ${MOCK_FAULTS:-1}
+    ports:
+      - "4010:4010"
+
+  scraper:
+    build: ./scrapers
+    command: ["node", "src/cli.js", "run", "--every", "${SCRAPE_EVERY:-30m}"]
+    environment:
+      BOARDS_URL: http://mockboards:4010
+      # Links shown in the UI must open from your browser, not from inside Docker.
+      PUBLIC_BOARDS_URL: http://localhost:4010
+      API_URL: http://backend:8000
+      INGEST_TOKEN: ${INGEST_TOKEN:-dev-ingest-token}
+      SCRAPE_CONCURRENCY: ${SCRAPE_CONCURRENCY:-3}
+      LOG_FORMAT: pretty
+    depends_on:
+      backend:
+        condition: service_healthy
+      mockboards:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+decode_payload:
+  enabled: true
+load_config:
+  enabled: true
