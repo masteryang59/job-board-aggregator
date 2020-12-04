@@ -11,3 +11,4 @@ backend/staticfiles/
 *.ndjson
 *.filter_items.tmp
 *.destroy_session.tmp
+*.filter_items.tmp
