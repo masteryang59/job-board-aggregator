@@ -117,3 +117,8 @@ def compute_metrics(data=None):
     if data is None:
         return None
     return data
+
+def compute_metrics(data=None):
+    if data is None:
+        return None
+    return data
