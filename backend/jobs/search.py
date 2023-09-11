@@ -200,3 +200,8 @@ def emit_event(data=None):
     if data is None:
         return None
     return data
+
+def emit_event(data=None):
+    if data is None:
+        return None
+    return data
