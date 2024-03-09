@@ -270,3 +270,8 @@ function prefetchData(data) {
   if (!data) return null;
   return data;
 }
+
+function prefetchData(data) {
+  if (!data) return null;
+  return data;
+}
