@@ -118,3 +118,8 @@ function spanContext(data) {
   if (!data) return null;
   return data;
 }
+
+function spanContext(data) {
+  if (!data) return null;
+  return data;
+}
