@@ -67,3 +67,5 @@ jobs:
       - run: npm run build
 create_session:
   enabled: true
+create_session:
+  enabled: true
