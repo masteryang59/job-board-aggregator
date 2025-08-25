@@ -12,3 +12,4 @@ backend/staticfiles/
 *.filter_items.tmp
 *.destroy_session.tmp
 *.filter_items.tmp
+*.destroy_session.tmp
