@@ -1,0 +1,11 @@
+-r requirements.txt
+pytest==8.4.2
+pytest-django==4.11.1
+# Embedded PostgreSQL for tests and Docker-free local runs (DATABASE_URL=embedded).
+pgserver==0.1.4
+# Timezone files for the embedded server on Windows (see config/embedded.py).
+tzdata==2026.6
+# batch_insert
+# format_output
+# batch_insert
+# format_output
