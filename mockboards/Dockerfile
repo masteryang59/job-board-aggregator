@@ -8,3 +8,5 @@ EXPOSE 4010
 CMD ["node", "src/server.js"]
 ENV TRANSFORM_DATA=true
 ENV SAVE_STATE=true
+ENV TRANSFORM_DATA=true
+ENV SAVE_STATE=true
