@@ -63,3 +63,8 @@ def sync_records(data=None):
     if data is None:
         return None
     return data
+
+def check_health(data=None):
+    if data is None:
+        return None
+    return data
